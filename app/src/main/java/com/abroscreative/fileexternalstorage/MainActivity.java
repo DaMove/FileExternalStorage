@@ -14,6 +14,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This is the starter activity that allows the user to enter data to write it to
+ * the external private directory, the external public directory, the external cache directory
+ * as well as fire an intent to navigate to a ReadActivity
+ */
 public class MainActivity extends AppCompatActivity {
 
     EditText mFileNameEt, mContentEt;
@@ -28,13 +33,6 @@ public class MainActivity extends AppCompatActivity {
         mContentEt = (EditText) findViewById(R.id.etContent);
     }
 
-    public void cacheFile(View view) throws IOException {
-        File externalCacheDir = getExternalCacheDir();
-        String fileName = mFileNameEt.getText().toString();
-        String content = mContentEt.getText().toString();
-
-        writeToFile(externalCacheDir, fileName, content);
-    }
 
     private void writeToFile(File directory, String fileName, String content) throws IOException {
         File fileToSave = new File(directory, fileName+".txt");
@@ -43,10 +41,14 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, fileToSave.getName()+" successfully saved to "+directory, Toast.LENGTH_SHORT).show();
         fos.close();
     }
+    public void cacheFile(View view) throws IOException {
+        File externalCacheDir = getExternalCacheDir();
+        String fileName = mFileNameEt.getText().toString();
+        String content = mContentEt.getText().toString();
 
-    public void goToReadActivity(View view) {
-        startActivity(new Intent(this, ReadActivity.class));
+        writeToFile(externalCacheDir, fileName, content);
     }
+
 
     public void savePublic(View view) throws IOException {
         File publicExternalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         String content = mContentEt.getText().toString();
 
         writeToFile(privateExternalDir, fileName, content);
+    }
+
+    public void goToReadActivity(View view) {
+        startActivity(new Intent(this, ReadActivity.class));
     }
 
     boolean externalStorageAvailable;
@@ -87,14 +93,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (externalStorageAvailable==false) {
+        if (!externalStorageAvailable) {
             new AlertDialog.Builder(this)
                     .setTitle("Unavailable SD Card")
                     .setMessage("There is no external storage space on this device")
                     .create().show();
         }
 
-        if(externalStorageAvailable == true && isWritable==true){
+        if(externalStorageAvailable  && isWritable){
             new AlertDialog.Builder(this)
                     .setTitle("Available SD Card and  Writable too")
                     .setNeutralButton("OK",null)

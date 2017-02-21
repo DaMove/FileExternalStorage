@@ -14,6 +14,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * This is the activity that allows the user to enter a file name to read from
+ * the external private directory, the external public directory and the external cache directory.
+ *
+ */
 public class ReadActivity extends AppCompatActivity {
     EditText mEtFileName;
     TextView mTvDisplayContent;
@@ -53,14 +58,14 @@ public class ReadActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (externalStorageAvailable==false) {
+        if (!externalStorageAvailable) {
             new AlertDialog.Builder(this)
                     .setTitle("Unavailable SD Card")
                     .setMessage("There is no external storage space on this device")
                     .create().show();
         }
 
-        if(externalStorageAvailable == true && isWritable==true){
+        if(externalStorageAvailable  && isWritable){
             new AlertDialog.Builder(this)
                     .setTitle("Available SD Card and  Writable too")
                     .setMessage("Please remember to declare the uses permission for WRITE EXTERNAL STORAGE")
@@ -79,7 +84,7 @@ public class ReadActivity extends AppCompatActivity {
     private void readFromFile(File directory, String fileName ) throws IOException {
         File fileToRead = new File(directory, fileName+".txt");
         FileInputStream fis = new FileInputStream(fileToRead);
-        int dataRead = -1;
+        int dataRead;
         StringBuilder sb = new StringBuilder();
         while ((dataRead = fis.read())!=-1) {
             sb.append((char)dataRead);
